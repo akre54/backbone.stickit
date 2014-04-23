@@ -1141,28 +1141,6 @@ test('bindings:selectOptions:defaultOption:OptGroups', 8, function() {
     equal(view.$('#test5').attr('data-name'), 'evian');
   });
 
-  test('bindings:attributes:name:class', function() {
-
-    model.set({'water':'fountain'});
-    view.model = model;
-    view.templateId = 'jst9';
-    view.bindings = {
-      '#test9': {
-        observe: 'water',
-        attributes: [{
-          name: 'class'
-        }]
-      }
-    };
-
-    $('#qunit-fixture').html(view.render().el);
-
-    ok(view.$('#test9').hasClass('test') && view.$('#test9').hasClass('fountain'));
-
-    model.set('water', 'evian');
-    ok(view.$('#test9').hasClass('test') && view.$('#test9').hasClass('evian'));
-  });
-
   test('bindings:attributes:onGet', function() {
 
     model.set({'water':'fountain'});
@@ -1311,6 +1289,28 @@ test('bindings:selectOptions:defaultOption:OptGroups', 8, function() {
     model.set('truthy', 'string is truthy');
     ok(view.$('#test5').hasClass('col-md-2'));
     ok(!view.$('#test5').hasClass('col-md-3'));
+  });
+
+  test('bindings:classes:this', function() {
+
+    model.set({'water':'fountain'});
+    view.model = model;
+    view.templateId = 'jst9';
+    view.bindings = {
+      '#test9': {
+        observe: 'water',
+        classes: {
+          'this': 'water'
+        }
+      }
+    };
+
+    $('#qunit-fixture').html(view.render().el);
+
+    ok(view.$('#test9').hasClass('test') && view.$('#test9').hasClass('fountain'));
+
+    model.set('water', 'evian');
+    ok(view.$('#test9').hasClass('test') && view.$('#test9').hasClass('evian'));
   });
 
   test('input:number', function() {

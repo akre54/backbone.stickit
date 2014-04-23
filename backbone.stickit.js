@@ -305,18 +305,12 @@
     var props = ['autofocus', 'autoplay', 'async', 'checked', 'controls', 'defer', 'disabled', 'hidden', 'indeterminate', 'loop', 'multiple', 'open', 'readonly', 'required', 'scoped', 'selected'];
 
     _.each(config.attributes || [], function(attrConfig) {
-      var lastClass = '', observed, updateAttr;
       attrConfig = _.clone(attrConfig);
-      observed = attrConfig.observe || (attrConfig.observe = modelAttr),
-      updateAttr = function() {
+      var observed = attrConfig.observe || (attrConfig.observe = modelAttr);
+      var updateAttr = function() {
         var updateType = _.indexOf(props, attrConfig.name, true) > -1 ? 'prop' : 'attr',
-          val = getAttr(model, observed, attrConfig, view);
-        // If it is a class then we need to remove the last value and add the new.
-        if (attrConfig.name === 'class') {
-          $el.removeClass(lastClass).addClass(val);
-          lastClass = val;
-        }
-        else $el[updateType](attrConfig.name, val);
+            val = getAttr(model, observed, attrConfig, view);
+        $el[updateType](attrConfig.name, val);
       };
       _.each(_.flatten([observed]), function(attr) {
         observeModelEvent(model, view, 'change:' + attr, config, updateAttr);
@@ -327,11 +321,13 @@
 
   var initializeClasses = function(view, $el, config, model, modelAttr) {
     _.each(config.classes || [], function(classConfig, name) {
-      var observed, updateClass;
-      observed = classConfig.observe || classConfig;
-      updateClass = function() {
+      var lastClass = '';
+      var observed = classConfig.observe || classConfig;
+      var updateClass = function() {
         var val = getAttr(model, observed, classConfig, view);
-        $el.toggleClass(name, !!val);
+        var className = name === 'this' ? val : name;
+        $el.removeClass(lastClass).toggleClass(className, !!val);
+        lastClass = className;
       };
 
       _.each(_.flatten([observed]), function(attr) {
